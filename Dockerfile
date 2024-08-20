@@ -13,11 +13,11 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Install curl for the health check (if it's not included in the base image)
+# Install curl for the health check
 RUN apt-get install -y curl
 
-# Switch back to the Jenkins user if necessary (adjust as needed)
-# USER jenkins
+# Switch back to the Node user
+USER node
 
 # Set a health check for the container
 HEALTHCHECK --interval=5s \
