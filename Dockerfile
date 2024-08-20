@@ -1,13 +1,41 @@
-# use a node base image
-FROM node:7-onbuild
+# Use a Node.js base image
+FROM node:18
 
-# set maintainer
-LABEL maintainer "miiro@getintodevops.com"
+# Set the maintainer label
+LABEL maintainer="miiro@getintodevops.com"
 
-# set a health check
+# Switch to root user to install Docker
+USER root
+
+# Install Docker
+RUN apt-get update && apt-get install -y \
+    docker.io \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install curl for the health check (if it's not included in the base image)
+RUN apt-get install -y curl
+
+# Switch back to the Jenkins user if necessary (adjust as needed)
+# USER jenkins
+
+# Set a health check for the container
 HEALTHCHECK --interval=5s \
             --timeout=5s \
             CMD curl -f http://127.0.0.1:8000 || exit 1
 
-# tell docker what port to expose
+# Tell Docker what port to expose
 EXPOSE 8000
+
+# Set the working directory
+WORKDIR /usr/src/app
+
+# Copy package files and install dependencies
+COPY package*.json ./
+RUN npm install
+
+# Copy the application files
+COPY . .
+
+# Command to run the application
+CMD ["npm", "start"]
