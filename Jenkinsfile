@@ -7,8 +7,9 @@ node {
     }
 
     stage('Build image') {
-        /* Build the Docker image using the host Docker daemon */
-        sh 'docker build -t vipinlalrv/node-pipeline .'
+        /* This builds the actual image; synonymous to
+         * docker build on the command line */
+        app = docker.build("vipinlalrv/node-pipeline")
     }
 
     stage('Test image') {
